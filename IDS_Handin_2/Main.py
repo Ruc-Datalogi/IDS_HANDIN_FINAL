@@ -5,6 +5,12 @@ from StaticVariables import *
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
+## Game on ## 
+
+game_on = False
+
+
+
 ## Font for displaying strings ##
 font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -30,13 +36,14 @@ x_vel_computer = 0
 y_vel_computer = 10
 
 
-## Casting to int to make sure it is not a float ##
-ball_pos = [int(image_width/2) +10,int(image_height/2)]
+## Start ball pos ##
+ball_pos = [100, 150]
 
-ball_vel = [8,8]
+ball_vel = [6,6]
 score = [0,0] 
 
-color = (255,255,255)
+## Color for the rectangles ##
+color = (0,0,255)
 
 ## Get the player vel ##
 def get_player_vel(hand_y_pos, player_y_pos):
@@ -182,31 +189,42 @@ with mp_hands.Hands(
     if results.multi_hand_landmarks:
       for hand_landmarks in results.multi_hand_landmarks:
         y_vel_player = get_player_vel(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y * image_height, y_pos_player)
+
+        if(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y * image_height < 50):
+            game_on = True
         mp_drawing.draw_landmarks(
             image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
     
-    y_pos_computer, y_vel_computer = move_computer(y_pos_computer, y_vel_computer, ball_pos)
-    y_pos_player = move_player(y_pos_player,y_vel_player)
+    ## Play Game ##
+    if game_on:
+        y_pos_computer, y_vel_computer = move_computer(y_pos_computer, y_vel_computer, ball_pos)
+        y_pos_player = move_player(y_pos_player,y_vel_player)
 
-    ball_vel, ball_pos = ball_collision(ball_pos,ball_vel,y_pos_computer,y_pos_player, score)
-    ball_pos, ball_vel = move_ball(ball_pos, ball_vel, image_height, image_width)
-    #check_score(ball_pos, score)
-    
-    ## Drawing Computer ##
-    image = cv2.rectangle(image,(x_pos_computer,y_pos_computer),(x_pos_computer + StaticVariables.PLAYER_SIZE[0] ,y_pos_computer + StaticVariables.PLAYER_SIZE[1]),color,-1)
+        ball_vel, ball_pos = ball_collision(ball_pos,ball_vel,y_pos_computer,y_pos_player, score)
+        ball_pos, ball_vel = move_ball(ball_pos, ball_vel, image_height, image_width)
+        #check_score(ball_pos, score)
+        
+        ## Drawing Computer ##
+        image = cv2.rectangle(image,(x_pos_computer,y_pos_computer),(x_pos_computer + StaticVariables.PLAYER_SIZE[0] ,y_pos_computer + StaticVariables.PLAYER_SIZE[1]),color,-1)
 
-    ## Drawing Player ##
-    image = cv2.rectangle(image,(x_pos_player,y_pos_player),(x_pos_player + StaticVariables.PLAYER_SIZE[0] , y_pos_player + StaticVariables.PLAYER_SIZE[1]),color,-1)
+        ## Drawing Player ##
+        image = cv2.rectangle(image,(x_pos_player,y_pos_player),(x_pos_player + StaticVariables.PLAYER_SIZE[0] , y_pos_player + StaticVariables.PLAYER_SIZE[1]),color,-1)
 
-    ## Drawing Ball ##
-    image = cv2.rectangle(image,(ball_pos[0],ball_pos[1]),(ball_pos[0] + StaticVariables.BALL_SIZE ,ball_pos[1] + StaticVariables.BALL_SIZE), color, -1)
+        ## Drawing Ball ##
+        image = cv2.rectangle(image,(ball_pos[0],ball_pos[1]),(ball_pos[0] + StaticVariables.BALL_SIZE ,ball_pos[1] + StaticVariables.BALL_SIZE), color, -1)
 
-    ## Score for the player and computer ##
-    cv2.putText(image,str(score[0]),(int((image_width / 2)-60),40),font,1,(0,0,0))
-    cv2.putText(image,str(score[1]),(int((image_width / 2)+60),40),font,1,(0,0,0))
+        ## Score for the player and computer ##
+        cv2.putText(image,str(score[0]),(int((image_width / 2)-60),40),font,1,(0,0,0))
+        cv2.putText(image,str(score[1]),(int((image_width / 2)+60),40),font,1,(0,0,0))
 
-    cv2.imshow('PING PONG DING DONG', image)
+    ## Show start screen ##
+    else:
+        cv2.putText(image,'You control with the tip', (0 , 60),font,1,(0,0,0))
+        cv2.putText(image,'of your index finger!', (0 , 100),font,1,(0,0,0))
+        cv2.putText(image,'Raise your finger to start the game', (0 , 140),font , 1 ,(0,0,0))
+        cv2.putText(image,'Press space to take a picture :)', (0, 240), font , 1 ,(0,0,0))
 
+    cv2.imshow('PING PONG', image)
 
     ## To escape the program ## 
     key = cv2.waitKey(5)
@@ -214,9 +232,12 @@ with mp_hands.Hands(
     ## Escape pressed ##
     if key % 256 == 27:
         break
+
+    ## Press space to take a picture ##
     elif key % 256 == 32:
-        image_name = "Ping_Pong_ScreenShot{}.png".format(random.randint(0,1000000))
-        print("hello")
-        cv2.imwrite(image_name, image)
+        image_name = "Ping_Pong_ScreenShot{}.png".format(random.randint(0,10000000))
+        cv2.imwrite("IDS_Handin_2/Saved_Images/"+ str(image_name), image)
+        
+
 
 cap.release()
