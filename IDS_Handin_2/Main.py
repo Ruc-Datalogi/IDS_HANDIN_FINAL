@@ -6,10 +6,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
 ## Game on ## 
-
 game_on = False
-
-
 
 ## Font for displaying strings ##
 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -137,7 +134,7 @@ def ball_collision(ball_pos, ball_vel, y_pos_computer, y_pos_player, score):
            ball_vel[0] *= -1
         
 
-    ## To make sure we are behind the rect ##
+    ## To make sure we are behind the rect and then update the score##
     if ball_pos[0] < 0 + StaticVariables.BALL_SIZE:
         ball_pos[0] = 250
         ball_pos[1] = 250
@@ -152,7 +149,7 @@ def ball_collision(ball_pos, ball_vel, y_pos_computer, y_pos_player, score):
             ball_vel[0] *= -1
 
     
-    ## To make sure we are behind the player ##    
+    ## To make sure we are behind the player and then update the score##    
     if 640 - StaticVariables.BALL_SIZE < ball_pos[0]:
         ball_pos[0] = 250
         ball_pos[1] = 250
