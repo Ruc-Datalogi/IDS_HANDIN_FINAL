@@ -32,6 +32,7 @@ y_pos_computer = 10
 x_vel_computer = 0
 y_vel_computer = 10
 
+computer_direction = 0
 
 ## Start ball pos ##
 ball_pos = [100, 150]
@@ -76,16 +77,19 @@ def move_player(y_pos_player, y_vel_player):
     return y_pos_player
 
 
-def move_computer(com_pos, com_vel, ball_pos):
-    com_pos += com_vel
+def move_computer(com_pos, com_vel, ball_pos, computer_direction):
+    computer_direction += 1
 
-    #if abs(ball_pos[1] - com_pos)/(ball_pos[1]+com_pos/2) < 0.02:
-       # com_vel = 0
-    if ball_pos[1] - com_pos < 6:
+    ## Let's wait 2 frame before changing direction
+    if ball_pos[1] - com_pos < StaticVariables.BALL_SIZE and 2 < computer_direction :
         com_vel = -10
-    else:
+        computer_direction = 0
         
+    elif 2 < computer_direction:
         com_vel = 10
+        computer_direction = 0
+
+    com_pos += com_vel
 
     ## Make sure we stay within the boundrary##    
     if com_pos > StaticVariables.IMAGE_HEIGHT - StaticVariables.PLAYER_SIZE[1]:
@@ -93,7 +97,7 @@ def move_computer(com_pos, com_vel, ball_pos):
     if com_pos < 0:
         com_pos = 0
 
-    return com_pos, com_vel
+    return com_pos, com_vel, computer_direction
 
 
 def check_score(ball_pos, score):
@@ -194,7 +198,7 @@ with mp_hands.Hands(
     
     ## Play Game ##
     if game_on:
-        y_pos_computer, y_vel_computer = move_computer(y_pos_computer, y_vel_computer, ball_pos)
+        y_pos_computer, y_vel_computer, computer_direction = move_computer(y_pos_computer, y_vel_computer, ball_pos, computer_direction)
         y_pos_player = move_player(y_pos_player,y_vel_player)
 
         ball_vel, ball_pos = ball_collision(ball_pos,ball_vel,y_pos_computer,y_pos_player, score)
