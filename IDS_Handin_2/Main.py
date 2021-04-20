@@ -84,7 +84,7 @@ def move_computer(com_pos, com_vel, ball_pos, computer_direction):
     if ball_pos[1] - com_pos < StaticVariables.BALL_SIZE and 2 < computer_direction :
         com_vel = -10
         computer_direction = 0
-        
+
     elif 2 < computer_direction:
         com_vel = 10
         computer_direction = 0
@@ -112,12 +112,6 @@ def check_score(ball_pos, score):
 def move_ball(ball_pos,ball_vel, image_height, image_width):
     ball_pos[0] += ball_vel[0]
     ball_pos[1] += ball_vel[1]
-
-    #if ball_pos[0] > image_width - 14:
-    #    ball_vel[0] *= -1
-
-    #if ball_pos[0] < 0:
-    #    ball_vel[0] *= -1
     
     if ball_pos[1] > StaticVariables.IMAGE_HEIGHT - StaticVariables.BALL_SIZE:
         ball_pos[1] = StaticVariables.IMAGE_HEIGHT - StaticVariables.BALL_SIZE
