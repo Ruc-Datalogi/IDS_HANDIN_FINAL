@@ -182,7 +182,6 @@ with mp_hands.Hands(
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     if results.multi_hand_landmarks:
       for hand_landmarks in results.multi_hand_landmarks:
-        print(hand_landmarks)
         y_vel_player = get_player_vel(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y * image_height, y_pos_player)
 
         if(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y * image_height < 50):
