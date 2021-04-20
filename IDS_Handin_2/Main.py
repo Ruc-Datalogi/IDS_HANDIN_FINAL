@@ -29,7 +29,6 @@ y_vel_player = 0
 x_pos_computer = 10 
 y_pos_computer = 10
 
-x_vel_computer = 0
 y_vel_computer = 10
 
 computer_direction = 0
@@ -177,12 +176,13 @@ with mp_hands.Hands(
     # pass by reference.
     image.flags.writeable = False
     results = hands.process(image)
-
+    
     # Draw the hand annotations on the image.
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     if results.multi_hand_landmarks:
       for hand_landmarks in results.multi_hand_landmarks:
+        print(hand_landmarks)
         y_vel_player = get_player_vel(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y * image_height, y_pos_player)
 
         if(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y * image_height < 50):
@@ -233,6 +233,5 @@ with mp_hands.Hands(
         image_name = "Ping_Pong_ScreenShot{}.png".format(random.randint(0,10000000))
         cv2.imwrite("IDS_Handin_2/Saved_Images/"+ str(image_name), image)
         
-
 
 cap.release()
